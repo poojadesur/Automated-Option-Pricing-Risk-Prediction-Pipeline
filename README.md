@@ -74,6 +74,35 @@ pip install -e .
 
 ## 📊 Usage
 
+### Command-Line Interface (CLI)
+
+The project includes a comprehensive CLI for quick calculations:
+
+#### Price an option:
+```bash
+python cli.py price -S 100 -K 100 -T 1.0 -r 0.05 -v 0.2 -t call
+```
+
+#### Calculate Greeks:
+```bash
+python cli.py greeks -S 100 -K 100 -T 1.0 -r 0.05 -v 0.2 -t call
+```
+
+#### Monte Carlo pricing:
+```bash
+python cli.py montecarlo -S 100 -K 100 -T 1.0 -r 0.05 -v 0.2 -n 10000
+```
+
+#### Train models:
+```bash
+python cli.py train -n 10000 -s 5000 -m xgboost -o models/saved
+```
+
+#### Run inference:
+```bash
+python cli.py infer -S 100 -K 100 -T 1.0 -r 0.05 -v 0.2 -d models/saved
+```
+
 ### Quick Start - Quantitative Models
 
 Run the quantitative models demo:
