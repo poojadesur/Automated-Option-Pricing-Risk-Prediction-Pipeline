@@ -181,6 +181,70 @@ pytest tests/ --cov=option_pricing_pipeline --cov-report=html
 ## 📈 Model Performance
 
 The ML models achieve:
+- **Option Pricing**: R² > 0.96, RMSE < $5, MAPE < 5%
+- **Risk Metrics**: R² > 0.97 for VaR/CVaR prediction
+- **Greeks Prediction**: R² > 0.97 for all Greeks (Delta, Gamma, Vega, etc.)
+- **Inference Speed**: ~100x faster than Monte Carlo simulation
+- **Put-Call Parity**: Validated with <1% error
+
+## 🏗️ Architecture
+
+### System Components
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Data Layer                                │
+│  ┌──────────────┐  ┌──────────────┐  ┌─────────────────┐   │
+│  │ Data         │  │ Feature      │  │ Data            │   │
+│  │ Generation   │→ │ Engineering  │→ │ Validation      │   │
+│  └──────────────┘  └──────────────┘  └─────────────────┘   │
+└─────────────────────────────────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────────┐
+│                  Model Layer                                 │
+│  ┌──────────────┐  ┌──────────────┐  ┌─────────────────┐   │
+│  │ Black-       │  │ Monte Carlo  │  │ ML Models       │   │
+│  │ Scholes      │  │ Simulation   │  │ (XGBoost/RF)    │   │
+│  └──────────────┘  └──────────────┘  └─────────────────┘   │
+└─────────────────────────────────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────────┐
+│                 Pipeline Layer                               │
+│  ┌──────────────┐  ┌──────────────┐  ┌─────────────────┐   │
+│  │ Training     │  │ Inference    │  │ Monitoring      │   │
+│  │ (Prefect)    │  │ Pipeline     │  │ (MLflow)        │   │
+│  └──────────────┘  └──────────────┘  └─────────────────┘   │
+└─────────────────────────────────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────────┐
+│              Deployment Layer                                │
+│  ┌──────────────┐  ┌──────────────┐  ┌─────────────────┐   │
+│  │ Docker       │  │ CLI          │  │ API (Future)    │   │
+│  │ Containers   │  │ Interface    │  │                 │   │
+│  └──────────────┘  └──────────────┘  └─────────────────┘   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Data Flow
+
+1. **ETL Pipeline**: Generate synthetic option data → Validate → Engineer features
+2. **Quantitative Computation**: Calculate option prices (Black-Scholes) → Compute Greeks → Run Monte Carlo for risk metrics
+3. **ML Training**: Train XGBoost/Random Forest models on computed data → Validate performance → Save models
+4. **Inference**: Load trained models → Fast prediction → Compare with analytical solutions
+5. **Monitoring**: Track predictions → Detect drift → Log metrics to MLflow
+
+### MLOps Workflow
+
+- **Experiment Tracking**: All training runs logged to MLflow
+- **Model Versioning**: Models saved with metadata and metrics
+- **Pipeline Orchestration**: Prefect manages task dependencies and retries
+- **Data Validation**: Automated checks for data quality
+- **Performance Monitoring**: Continuous tracking of model accuracy
+- **CI/CD**: Automated testing and Docker builds
+
+## 📈 Model Performance
+
+The ML models achieve:
 - **Option Pricing**: R² > 0.99, MAPE < 1%
 - **Risk Metrics**: R² > 0.95 for VaR/CVaR prediction
 - **Inference Speed**: ~100x faster than Monte Carlo simulation
