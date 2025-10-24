@@ -70,3 +70,6 @@ Thumbs.db
 
 # Prefect
 .prefect/
+
+# Visualizations
+visualizations/
