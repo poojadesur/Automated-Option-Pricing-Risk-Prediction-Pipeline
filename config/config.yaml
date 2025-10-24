@@ -1,0 +1,48 @@
+# Configuration for Option Pricing Pipeline
+
+# Data generation settings
+data:
+  n_training_samples: 10000
+  n_test_samples: 2000
+  seed: 42
+  
+  # Parameter ranges
+  stock_price_range: [50, 150]
+  strike_price_range: [50, 150]
+  time_to_maturity_range: [0.1, 2.0]
+  risk_free_rate_range: [0.01, 0.10]
+  volatility_range: [0.10, 0.50]
+
+# Monte Carlo settings
+monte_carlo:
+  n_simulations: 10000
+  n_steps: 252
+  seed: 42
+
+# Model training settings
+models:
+  pricing_model:
+    type: xgboost
+    test_size: 0.2
+    scale_features: true
+  
+  risk_model:
+    type: xgboost
+    test_size: 0.2
+
+# MLflow settings
+mlflow:
+  experiment_name: option_pricing_pipeline
+  tracking_uri: ./mlruns
+  
+# Pipeline settings
+pipeline:
+  output_dir: models/saved
+  data_dir: data
+  log_dir: logs
+
+# Monitoring settings
+monitoring:
+  drift_threshold: 0.1
+  log_predictions: true
+  log_interval: 100

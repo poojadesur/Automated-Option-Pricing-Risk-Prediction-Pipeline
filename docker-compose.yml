@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  mlflow:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlruns:/app/mlruns
+      - ./models:/app/models
+      - ./data:/app/data
+      - ./logs:/app/logs
+    environment:
+      - MLFLOW_TRACKING_URI=./mlruns
+    command: python -m mlflow ui --host 0.0.0.0
+
+  pipeline:
+    build: .
+    volumes:
+      - ./mlruns:/app/mlruns
+      - ./models:/app/models
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./examples:/app/examples
+    environment:
+      - MLFLOW_TRACKING_URI=./mlruns
+    command: python examples/train_models.py
+    depends_on:
+      - mlflow
